@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Student-info/AndroidStudioProjects/App-TFE/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2485" />
+        <entry key="..\:/Users/Student-info/AndroidStudioProjects/App-TFE/app/src/main/res/drawable/ic_erase_foreground.xml" value="0.2485" />
+        <entry key="..\:/Users/Student-info/AndroidStudioProjects/App-TFE/app/src/main/res/drawable/icone_erase.xml" value="0.2485" />
+        <entry key="..\:/Users/Student-info/AndroidStudioProjects/App-TFE/app/src/main/res/drawable/icone_erase_vector.xml" value="0.2485" />
         <entry key="..\:/Users/Student-info/AndroidStudioProjects/App-TFE/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/lulub/Desktop/AndroidStudio/AppTFE/app/src/main/res/layout/activity_main.xml" value="0.35260416666666666" />
       </map>
