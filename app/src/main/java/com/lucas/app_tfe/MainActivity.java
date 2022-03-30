@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    public String BaseUrlSrv = "https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+
     TextView mTextViewBnj;
     EditText mEditTextServeur;
     Button mBtnBoissons;
@@ -77,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
         mBtnBoissons.setOnClickListener(view -> {
             Toast.makeText(this, "Sert les Boissons", Toast.LENGTH_SHORT).show();
             checkName(mEditTextServeur.getText().toString());
+
+            Intent affichageProduits = new Intent(MainActivity.this,AffichageProduitsActivity.class);
+            startActivity(affichageProduits);
         });
 
     }

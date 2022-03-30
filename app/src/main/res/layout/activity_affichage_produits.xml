@@ -5,5 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AffichageProduitsActivity">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
+        <TableLayout
+            android:id="@+id/affichage_prod_tableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints"
+            android:stretchColumns="0"
+            android:shrinkColumns="0">
+
+        </TableLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
