@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     Button mBtnBoissons;
     Button mBtnRepas;
 
+    Intent affichageProduits;
+
     private static final String SHARED_PREF_USER_INFO="SHARED_PREF_USER_INFO";
     private static final String SHARED_PREF_USER_NAME="SHARED_PREF_USER_NAME";
 
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
                 mBtnRepas.setEnabled(!s.toString().isEmpty());
             }
         });
+
+        affichageProduits = new Intent(MainActivity.this,AffichageProduitsActivity.class);
         
         onClick();
         greetServeur();
@@ -75,13 +79,20 @@ public class MainActivity extends AppCompatActivity {
         mBtnRepas.setOnClickListener(view -> {
             Toast.makeText(this, "Sert les repas", Toast.LENGTH_SHORT).show();
             checkName(mEditTextServeur.getText().toString());
+
+            Intent scan = new Intent(MainActivity.this,ScanActivity.class);
+            scan.putExtra("type_produits","Repas");
+            startActivity(scan);
         });
         mBtnBoissons.setOnClickListener(view -> {
             Toast.makeText(this, "Sert les Boissons", Toast.LENGTH_SHORT).show();
             checkName(mEditTextServeur.getText().toString());
 
-            Intent affichageProduits = new Intent(MainActivity.this,AffichageProduitsActivity.class);
-            startActivity(affichageProduits);
+            /*affichageProduits.putExtra("type_produits","Boisson");
+            startActivity(affichageProduits);*/
+            Intent scan = new Intent(MainActivity.this,ScanActivity.class);
+            scan.putExtra("type_produits","Boisson");
+            startActivity(scan);
         });
 
     }
