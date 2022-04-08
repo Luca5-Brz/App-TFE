@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Serveur-Patro</string>
-    <string name="bonjour_prenom">Bonjour %s, que sert-tu maintenant ?</string>
+    <string name="bonjour_prenom">Bonjour %s, que fais-tu maintenant ?</string>
 </resources>

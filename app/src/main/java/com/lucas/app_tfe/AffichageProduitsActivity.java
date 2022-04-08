@@ -3,6 +3,7 @@ package com.lucas.app_tfe;
 import static java.lang.Integer.parseInt;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class AffichageProduitsActivity extends MainActivity {
@@ -22,7 +26,7 @@ public class AffichageProduitsActivity extends MainActivity {
     String mPrixProduits = "2";
     String mQuantiteProduits = "0";
 
-    String[][] tabPrixProd = new String[50][5]; // [nomProd] [PrixProd] [QteProd]
+    String[][] tabPrixProd = new String[50][4]; // [nomProd] [PrixProd] [QteProd]
     String resultSrv;
 
     TableLayout mTableLayout;
@@ -58,150 +62,170 @@ public class AffichageProduitsActivity extends MainActivity {
     }
 
     public void afficherProd(){
+        if(!(resultSrv.equals("CarteVerrouille")) && !(resultSrv.equals("Carte_Inexistante")) ){
+            String[] tabSplit = resultSrv.split(";");
+            int i=0;
 
-        String[] tabSplit = resultSrv.split(";");
-        int i=0;
+            TableRow tbRowTitle = new TableRow(this);
+            TableLayout.LayoutParams layoutParamsTitle = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.MATCH_PARENT);
 
-        TableRow tbRowTitle = new TableRow(this);
-        TableLayout.LayoutParams layoutParamsTitle = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.MATCH_PARENT);
+            txtTotalTitle = new TextView(this);
+            txtTotalTitle.setText("Total : 0€");
+            txtTotalTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            txtTotalTitle.setTextSize(18);
 
-        txtTotalTitle = new TextView(this);
-        txtTotalTitle.setText("Total : 0€");
-        txtTotalTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        txtTotalTitle.setTextSize(18);
+            txtMontantTitle = new TextView(this);
+            txtMontantTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            txtMontantTitle.setTextSize(18);
 
-        txtMontantTitle = new TextView(this);
-        txtMontantTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        txtMontantTitle.setTextSize(18);
+            tbRowTitle.addView(txtTotalTitle);
+            tbRowTitle.addView(txtMontantTitle);
 
-        tbRowTitle.addView(txtTotalTitle);
-        tbRowTitle.addView(txtMontantTitle);
+            mTableLayoutTitle.addView(tbRowTitle,layoutParamsTitle);
 
-        mTableLayoutTitle.addView(tbRowTitle,layoutParamsTitle);
+            for ( String s : tabSplit)
+            {
+                String[] tabSplit2 = s.split(",");
 
-        for ( String s : tabSplit)
-        {
-            String[] tabSplit2 = s.split(",");
+                mIdProduit = tabSplit2[0];
+                mNomProduits = tabSplit2[1];
+                mPrixProduits = tabSplit2[2];
+                montantCarte = tabSplit2[3];
 
-            mIdProduit = tabSplit[0];
-            mNomProduits = tabSplit2[1];
-            mPrixProduits = tabSplit2[2];
-            montantCarte = tabSplit2[3];
-
-            tabPrixProd [i][0] = mIdProduit;
-            tabPrixProd [i][1] = mNomProduits;
-            tabPrixProd [i][2] = mQuantiteProduits;
-            tabPrixProd [i][3] = mPrixProduits;
-
-
-            txtMontantTitle.setText("Montant : "+montantCarte+"€");
-
-            TableRow tbRow = new TableRow(this);
-            TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.MATCH_PARENT);
+                tabPrixProd [i][0] = mIdProduit;
+                tabPrixProd [i][1] = mNomProduits;
+                tabPrixProd [i][2] = mQuantiteProduits;
+                tabPrixProd [i][3] = mPrixProduits;
 
 
-            TextView txtProd = new TextView(this);
-            txtProd.setText(mNomProduits);
-            txtProd.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                txtMontantTitle.setText("Montant : "+montantCarte+"€");
 
-            TextView txtPrixProd = new TextView(this);
-            txtPrixProd.setText(mPrixProduits+"€");
-            txtPrixProd.setPadding(15,0,15,0);
-            txtPrixProd.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                TableRow tbRow = new TableRow(this);
+                TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,TableLayout.LayoutParams.MATCH_PARENT);
 
-            TextView txtQteProd = new TextView(this);
-            txtQteProd.setText(mQuantiteProduits);
-            txtQteProd.setPadding(50,0,50,0);
-            txtQteProd.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-            Button btnPlus = new Button(this);
-            btnPlus.setText("+");
-            btnPlus.setEnabled(true);
-            btnPlus.setId(i);
-            btnPlus.setBackgroundTintList(ColorStateList.valueOf(0xffa4c408));
-            btnPlus.setOnClickListener(view -> {
-                
-                float total=total();
-                if(total<=(Float.valueOf(montantCarte))-Float.valueOf(tabPrixProd [btnPlus.getId()][3])){
+                TextView txtProd = new TextView(this);
+                txtProd.setText(mNomProduits);
+                txtProd.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-                    String temp = tabPrixProd[btnPlus.getId()][2];
-                    int temp2 = parseInt(temp)+1;
-                    tabPrixProd[btnPlus.getId()][2] = String.valueOf(temp2);
-                    txtQteProd.setText(String.valueOf(temp2));
+                TextView txtPrixProd = new TextView(this);
+                txtPrixProd.setText(mPrixProduits+"€");
+                txtPrixProd.setPadding(15,0,15,0);
+                txtPrixProd.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-                    total=total();
+                TextView txtQteProd = new TextView(this);
+                txtQteProd.setText(mQuantiteProduits);
+                txtQteProd.setPadding(50,0,50,0);
+                txtQteProd.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-                }else{
-                    Toast.makeText(this, "T'as pas de thune :"+total, Toast.LENGTH_SHORT).show();
-                }
-                
-            });
+                Button btnPlus = new Button(this);
+                btnPlus.setText("+");
+                btnPlus.setEnabled(true);
+                btnPlus.setId(i);
+                btnPlus.setBackgroundTintList(ColorStateList.valueOf(0xffa4c408));
+                btnPlus.setOnClickListener(view -> {
 
-            Button btnMoins = new Button(this);
-            btnMoins.setText("-");
-            btnMoins.setEnabled(true);
-            btnMoins.setId(i);
-            btnMoins.setBackgroundTintList(ColorStateList.valueOf(0xffa4c408));
-            btnMoins.setOnClickListener(view ->{
+                    float total=total();
+                    if(total<=(Float.valueOf(montantCarte))-Float.valueOf(tabPrixProd [btnPlus.getId()][3])){
 
-                float total=total();
-                String temp = tabPrixProd[btnMoins.getId()][2];
-                if(parseInt(temp)>0)
-                {
-                    int temp2 = parseInt(temp)-1;
-                    tabPrixProd[btnMoins.getId()][2] = String.valueOf(temp2);
-                    txtQteProd.setText(String.valueOf(temp2));
-                    total=total();
-                }
+                        String temp = tabPrixProd[btnPlus.getId()][2];
+                        int temp2 = parseInt(temp)+1;
+                        tabPrixProd[btnPlus.getId()][2] = String.valueOf(temp2);
+                        txtQteProd.setText(String.valueOf(temp2));
 
-            });
+                        total=total();
 
-            tbRow.addView(txtProd);
-            tbRow.addView(txtPrixProd);
-            tbRow.addView(txtQteProd);
-            tbRow.addView(btnPlus);
-            tbRow.addView(btnMoins);
+                    }else{
+                        Toast.makeText(this, "T'as pas de thune :"+total, Toast.LENGTH_SHORT).show();
+                    }
 
-            mTableLayout.addView(tbRow,layoutParams);
-            i++;
-        }
+                });
 
-        Button btnValider = new Button(this);
-        btnValider.setText("Valider !");
-        btnValider.setEnabled(true);
-        btnValider.setBackgroundTintList(ColorStateList.valueOf(0xffa4c408));
-        btnValider.setOnClickListener(view -> {
+                Button btnMoins = new Button(this);
+                btnMoins.setText("-");
+                btnMoins.setEnabled(true);
+                btnMoins.setId(i);
+                btnMoins.setBackgroundTintList(ColorStateList.valueOf(0xffa4c408));
+                btnMoins.setOnClickListener(view ->{
 
-            StringBuilder messageCommande= new StringBuilder();
+                    float total=total();
+                    String temp = tabPrixProd[btnMoins.getId()][2];
+                    if(parseInt(temp)>0)
+                    {
+                        int temp2 = parseInt(temp)-1;
+                        tabPrixProd[btnMoins.getId()][2] = String.valueOf(temp2);
+                        txtQteProd.setText(String.valueOf(temp2));
+                        total=total();
+                    }
 
-            for (int j=0;j< tabPrixProd.length;j++) {
-                if(tabPrixProd[j][3]!=null){
-                    String produit = tabPrixProd[j][1];
-                    int qte = parseInt(tabPrixProd[j][2]);
+                });
 
-                    messageCommande.append(produit);
-                    messageCommande.append("     ");
-                    messageCommande.append(qte);
-                    messageCommande.append("\n");
+                tbRow.addView(txtProd);
+                tbRow.addView(txtPrixProd);
+                tbRow.addView(txtQteProd);
+                tbRow.addView(btnPlus);
+                tbRow.addView(btnMoins);
 
-                }
+                mTableLayout.addView(tbRow,layoutParams);
+                i++;
             }
 
-            AlertDialog diagCommande = new AlertDialog.Builder(this)
-                    .setTitle("Récapitulatif de Commande")
-                    .setPositiveButton("ok",null)
-                    .setMessage(messageCommande.toString())
+            Button btnValider = new Button(this);
+            btnValider.setText("Valider !");
+            btnValider.setEnabled(true);
+            btnValider.setBackgroundTintList(ColorStateList.valueOf(0xffa4c408));
+            btnValider.setOnClickListener(view -> {
+
+                StringBuilder messageCommande= new StringBuilder();
+
+                for (int j=0;j< tabPrixProd.length;j++) {
+                    if(tabPrixProd[j][3]!=null){
+                        String produit = tabPrixProd[j][1];
+                        int qte = parseInt(tabPrixProd[j][2]);
+
+                        messageCommande.append(produit);
+                        messageCommande.append("     ");
+                        messageCommande.append(qte);
+                        messageCommande.append("\n");
+
+                    }
+                }
+
+                AlertDialog diagCommande = new AlertDialog.Builder(this)
+                        .setTitle("Récapitulatif de Commande")
+                        .setPositiveButton("OK",(dialogInterface, j) -> finish())
+                        .setMessage(messageCommande.toString())
+                        .create();
+                diagCommande.show();
+
+
+                JSONArray tabJSON = new JSONArray(Arrays.asList(tabPrixProd));
+                Log.e("tabJSON",""+tabJSON);
+
+                urlSrv=BaseUrlSrv+"/validerCommande.php?commande="+String.valueOf(tabJSON)+"&idCarte="+id_carte;
+                ValiderCommande conn = new ValiderCommande(this);
+                conn.execute(urlSrv);
+            Log.e("URL Commande",urlSrv);
+
+            });
+            mTableLayout.addView(btnValider);
+        } else if (resultSrv.equals("Carte_Inexistante")){
+
+            AlertDialog diagCarteInex = new AlertDialog.Builder(this)
+                    .setTitle("Carte Inexistante")
+                    .setMessage("Cette carte n'existe pas dans le système")
+                    .setPositiveButton("OK", (dialogInterface, i) -> finish())
                     .create();
-            diagCommande.show();
+            diagCarteInex.show();
 
-
-
-
-            urlSrv=BaseUrlSrv+"/validerCommande.php";
-            ValiderCommande conn = new ValiderCommande(this);
-            conn.execute(urlSrv);
-        });
-        mTableLayout.addView(btnValider);
+        }else{
+            AlertDialog diagCarte = new AlertDialog.Builder(this)
+                    .setTitle("Carte Verrouillée")
+                    .setMessage("Cette carte à été verrouilée, veuillez aller à la caisse")
+                    .setPositiveButton("OK",(dialogInterface, i) -> finish())
+                    .create();
+            diagCarte.show();
+        }
     }
 
     public float total(){

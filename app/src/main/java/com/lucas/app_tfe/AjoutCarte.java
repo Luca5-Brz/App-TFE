@@ -1,6 +1,5 @@
 package com.lucas.app_tfe;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -13,14 +12,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-public class CheckProduitsOnServer extends AsyncTask<String, String, String>{
+public class AjoutCarte extends AsyncTask<String, String, String>{
 
-    @SuppressLint("StaticFieldLeak")
-    AffichageProduitsActivity actiTest;
-
-    public CheckProduitsOnServer(AffichageProduitsActivity actiTest) {
-        this.actiTest = actiTest;
-    }
 
     protected String doInBackground(String... params) {
 
@@ -59,14 +52,12 @@ public class CheckProduitsOnServer extends AsyncTask<String, String, String>{
         super.onPostExecute(result);
 
         if (result==null){ //Le serveur ne répond pas
-            Log.e("Retour Serveur Produits","Pas de réponse du Serveur");
+            Log.e("Retour Serveur AddCarte","Pas de réponse du Serveur");
 
         }else{ //Le serveur à répondu
-            Log.e("Retour Serveur Produits",result);
+            Log.e("Retour Serveur AddCarte",result);
 
             try {
-                actiTest.resultSrv=result;
-                actiTest.afficherProd();
 
             } catch (Exception e) {
                 e.printStackTrace();

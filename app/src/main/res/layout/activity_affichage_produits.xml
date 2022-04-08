@@ -27,7 +27,7 @@
             tools:ignore="MissingConstraints"
             android:stretchColumns="0"
             android:shrinkColumns="0"
-            android:paddingTop="150dp">
+            android:paddingTop="30dp">
 
         </TableLayout>
 

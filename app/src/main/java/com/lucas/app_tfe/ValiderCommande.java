@@ -59,10 +59,10 @@ public class ValiderCommande extends AsyncTask<String, String, String>{
         super.onPostExecute(result);
 
         if (result==null){ //Le serveur ne répond pas
-            Log.e("Retour Serveur Prod","Pas de réponse du Serveur");
+            Log.e("Retour Serveur Commande","Pas de réponse du Serveur");
 
         }else{ //Le serveur à répondu
-            Log.e("Retour Serveur Prod",result);
+            Log.e("Retour Serveur Commande",result);
 
             try {
 

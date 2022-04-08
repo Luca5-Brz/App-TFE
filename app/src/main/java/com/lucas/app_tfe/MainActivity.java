@@ -7,7 +7,6 @@ import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,8 +19,11 @@ public class MainActivity extends AppCompatActivity {
     EditText mEditTextServeur;
     Button mBtnBoissons;
     Button mBtnRepas;
+    Button mBtnScanning;
 
     Intent affichageProduits;
+    Intent GestionCarte;
+    Intent scan;
 
     private static final String SHARED_PREF_USER_INFO="SHARED_PREF_USER_INFO";
     private static final String SHARED_PREF_USER_NAME="SHARED_PREF_USER_NAME";
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         affichageProduits = new Intent(MainActivity.this,AffichageProduitsActivity.class);
+        GestionCarte = new Intent(MainActivity.this,GestionCarteActivity.class);
+        scan = new Intent(MainActivity.this,ScanActivity.class);
         
         onClick();
         greetServeur();
@@ -69,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         mEditTextServeur = findViewById(R.id.main_editText_nom);
         mBtnBoissons = findViewById(R.id.main_button_boisson);
         mBtnRepas = findViewById(R.id.main_button_repas);
+        mBtnScanning = findViewById(R.id.main_button_scanning);
 
         mBtnBoissons.setEnabled(false);
         mBtnRepas.setEnabled(false);
@@ -77,22 +82,28 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(){
 
         mBtnRepas.setOnClickListener(view -> {
-            Toast.makeText(this, "Sert les repas", Toast.LENGTH_SHORT).show();
             checkName(mEditTextServeur.getText().toString());
 
-            Intent scan = new Intent(MainActivity.this,ScanActivity.class);
             scan.putExtra("type_produits","Repas");
+            scan.putExtra("gestion","Produits");
+            scan.putExtra("resultSrv","");
             startActivity(scan);
         });
         mBtnBoissons.setOnClickListener(view -> {
-            Toast.makeText(this, "Sert les Boissons", Toast.LENGTH_SHORT).show();
             checkName(mEditTextServeur.getText().toString());
 
-            /*affichageProduits.putExtra("type_produits","Boisson");
-            startActivity(affichageProduits);*/
-            Intent scan = new Intent(MainActivity.this,ScanActivity.class);
             scan.putExtra("type_produits","Boisson");
+            scan.putExtra("gestion","Produits");
+            scan.putExtra("resultSrv","");
             startActivity(scan);
+        });
+
+        mBtnScanning.setOnClickListener(view -> {
+            checkName(mEditTextServeur.getText().toString());
+
+            GestionCarte.putExtra("type_produits","");
+            GestionCarte.putExtra("gestion","Cartes");
+            startActivity(GestionCarte);
         });
 
     }

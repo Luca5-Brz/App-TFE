@@ -13,12 +13,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-public class CheckProduitsOnServer extends AsyncTask<String, String, String>{
+public class CheckClientOnServer extends AsyncTask<String, String, String>{
 
     @SuppressLint("StaticFieldLeak")
-    AffichageProduitsActivity actiTest;
+    GestionCarteActivity actiTest;
 
-    public CheckProduitsOnServer(AffichageProduitsActivity actiTest) {
+    public CheckClientOnServer(GestionCarteActivity actiTest) {
         this.actiTest = actiTest;
     }
 
@@ -59,14 +59,14 @@ public class CheckProduitsOnServer extends AsyncTask<String, String, String>{
         super.onPostExecute(result);
 
         if (result==null){ //Le serveur ne répond pas
-            Log.e("Retour Serveur Produits","Pas de réponse du Serveur");
+            Log.e("Retour Serveur Clients","Pas de réponse du Serveur");
 
         }else{ //Le serveur à répondu
-            Log.e("Retour Serveur Produits",result);
+            Log.e("Retour Serveur Client",result);
 
             try {
                 actiTest.resultSrv=result;
-                actiTest.afficherProd();
+                actiTest.splitString();
 
             } catch (Exception e) {
                 e.printStackTrace();
