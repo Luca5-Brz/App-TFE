@@ -14,12 +14,14 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class AffichageProduitsActivity extends MainActivity {
+public class AffichageProduitsActivity extends AppCompatActivity {
 
     String mIdProduit;
     String mNomProduits ="Pinte";
@@ -34,8 +36,11 @@ public class AffichageProduitsActivity extends MainActivity {
 
     String type_prod;
     String id_carte;
+    String login_admin;
 
     String montantCarte;
+
+    String BaseUrl = "https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
     String urlSrv;
 
     TextView txtTotalTitle;
@@ -54,8 +59,9 @@ public class AffichageProduitsActivity extends MainActivity {
         Bundle extras = getIntent().getExtras();
         type_prod = extras.get("type_produits").toString();
         id_carte = extras.get("id_carte").toString();
+        login_admin = extras.get("login_admin").toString();
 
-        urlSrv = BaseUrlSrv+"/getProd.php?type="+type_prod+"&idCarte="+id_carte;
+        urlSrv = BaseUrl+"/getProd.php?type="+type_prod+"&idCarte="+id_carte;
         CheckProduitsOnServer conn = new CheckProduitsOnServer(this);
         conn.execute(urlSrv);
         Log.e("urlllll",urlSrv);
@@ -202,7 +208,7 @@ public class AffichageProduitsActivity extends MainActivity {
                 JSONArray tabJSON = new JSONArray(Arrays.asList(tabPrixProd));
                 Log.e("tabJSON",""+tabJSON);
 
-                urlSrv=BaseUrlSrv+"/validerCommande.php?commande="+String.valueOf(tabJSON)+"&idCarte="+id_carte;
+                urlSrv=BaseUrl+"/validerCommande.php?commande="+String.valueOf(tabJSON)+"&idCarte="+id_carte+"&type="+type_prod+"&loginServeur="+login_admin; //type=Repas
                 ValiderCommande conn = new ValiderCommande(this);
                 conn.execute(urlSrv);
             Log.e("URL Commande",urlSrv);

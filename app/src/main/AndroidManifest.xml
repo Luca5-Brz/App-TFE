@@ -13,15 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppTFE">
         <activity
-            android:name=".GestionCarteActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ScanActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AffichageProduitsActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -30,6 +21,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Accueil"
+            android:exported="false" />
+        <activity
+            android:name=".GestionCarteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ScanActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AffichageProduitsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

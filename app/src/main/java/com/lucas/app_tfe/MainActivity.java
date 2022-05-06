@@ -1,128 +1,174 @@
 package com.lucas.app_tfe;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.Settings;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    public String BaseUrlSrv = "https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    PendingIntent pendingIntent;
+    NfcAdapter nfcAdapter;
+    TextView text;
 
-    TextView mTextViewBnj;
-    EditText mEditTextServeur;
-    Button mBtnBoissons;
-    Button mBtnRepas;
-    Button mBtnScanning;
+    String id_carte;
 
-    Intent affichageProduits;
-    Intent GestionCarte;
-    Intent scan;
+    String BaseUrl="https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    String urlSrv;
+    String resultSrv;
 
-    private static final String SHARED_PREF_USER_INFO="SHARED_PREF_USER_INFO";
-    private static final String SHARED_PREF_USER_NAME="SHARED_PREF_USER_NAME";
+    Intent accueil;
+    String login="";
+    String  niveau_admin="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initializeComponents();
-        
-        mEditTextServeur.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int i, int i1, int i2) {
+        text = findViewById(R.id.text);
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-            }
+        text.setText("Scannez la carte d'admin");
 
-            @Override
-            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+        if (nfcAdapter == null) {
+            Toast.makeText(this, "No NFC", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                mBtnBoissons.setEnabled(!s.toString().isEmpty());
-                mBtnRepas.setEnabled(!s.toString().isEmpty());
-            }
-        });
-
-        affichageProduits = new Intent(MainActivity.this,AffichageProduitsActivity.class);
-        GestionCarte = new Intent(MainActivity.this,GestionCarteActivity.class);
-        scan = new Intent(MainActivity.this,ScanActivity.class);
-        
-        onClick();
-        greetServeur();
-
+        pendingIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, this.getClass())
+                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        greetServeur();
-    }
+    protected void onResume() {
+        super.onResume();
 
-    public void initializeComponents(){
-        mTextViewBnj = findViewById(R.id.main_textview_bonjour);
-        mEditTextServeur = findViewById(R.id.main_editText_nom);
-        mBtnBoissons = findViewById(R.id.main_button_boisson);
-        mBtnRepas = findViewById(R.id.main_button_repas);
-        mBtnScanning = findViewById(R.id.main_button_scanning);
+        if (nfcAdapter != null) {
+            if (!nfcAdapter.isEnabled()) {
+                showWirelessSettings();
+            }
 
-        mBtnBoissons.setEnabled(false);
-        mBtnRepas.setEnabled(false);
-    }
-
-    public void onClick(){
-
-        mBtnRepas.setOnClickListener(view -> {
-            checkName(mEditTextServeur.getText().toString());
-
-            scan.putExtra("type_produits","Repas");
-            scan.putExtra("gestion","Produits");
-            scan.putExtra("resultSrv","");
-            startActivity(scan);
-        });
-        mBtnBoissons.setOnClickListener(view -> {
-            checkName(mEditTextServeur.getText().toString());
-
-            scan.putExtra("type_produits","Boisson");
-            scan.putExtra("gestion","Produits");
-            scan.putExtra("resultSrv","");
-            startActivity(scan);
-        });
-
-        mBtnScanning.setOnClickListener(view -> {
-            checkName(mEditTextServeur.getText().toString());
-
-            GestionCarte.putExtra("type_produits","");
-            GestionCarte.putExtra("gestion","Cartes");
-            startActivity(GestionCarte);
-        });
-
-    }
-
-    public void checkName(String name){
-        getSharedPreferences(SHARED_PREF_USER_INFO,MODE_PRIVATE)
-                .edit()
-                .putString(SHARED_PREF_USER_NAME,name)
-                .apply();
-    }
-
-    public void greetServeur(){
-        String prenom = getSharedPreferences(SHARED_PREF_USER_INFO,MODE_PRIVATE).getString(SHARED_PREF_USER_NAME,null);
-
-        if (prenom!=null){
-            mTextViewBnj.setText(getString(R.string.bonjour_prenom,prenom));
+            nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
         }
-        mEditTextServeur.setText(prenom);
+    }
 
+    private void showWirelessSettings() {
+        Toast.makeText(this, "You need to enable NFC", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        resolveIntent(intent);
+    }
+
+    private void resolveIntent(Intent intent) {
+        String action = intent.getAction();
+
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
+                || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
+                || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
+            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+            NdefMessage[] msgs;
+
+            if (rawMsgs != null) {
+                msgs = new NdefMessage[rawMsgs.length];
+
+                for (int i = 0; i < rawMsgs.length; i++) {
+                    msgs[i] = (NdefMessage) rawMsgs[i];
+                }
+            } else {
+                byte[] empty = new byte[0];
+                byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
+                Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+                byte[] payload = dumpTagData(tag).getBytes();
+                NdefRecord record = new NdefRecord(NdefRecord.TNF_UNKNOWN, empty, id, payload);
+                NdefMessage msg = new NdefMessage(new NdefRecord[] {record});
+                msgs = new NdefMessage[] {msg};
+            }
+            displayMsgs(msgs);
+        }
+    }
+
+    private void displayMsgs(NdefMessage[] msgs) {
+        if (msgs == null || msgs.length == 0)
+            return;
+    }
+
+    private String dumpTagData(Tag tag) {
+
+        byte[] id = tag.getId();
+
+        id_carte= String.valueOf(toDec(id));
+
+        urlSrv=BaseUrl+"/CheckAdmin.php?carte="+id_carte;
+        CheckAdmin conn = new CheckAdmin(this);
+        conn.execute(urlSrv);
+
+        Log.e("Numéro de Carte",String.valueOf(toDec(id)));
+        return String.valueOf(toDec(id));
+    }
+
+    private long toDec(byte[] bytes) {
+        long result = 0;
+        long factor = 1;
+        for (int i = 0; i < bytes.length; ++i) {
+            long value = bytes[i] & 0xffl;
+            result += value * factor;
+            factor *= 256l;
+        }
+        return result;
+    }
+
+    public void debut(){
+        String[] retourSrv = resultSrv.split(",");
+        String result = retourSrv[0];
+        login = retourSrv[1];
+        niveau_admin = retourSrv[2];
+
+        accueil = new Intent(MainActivity.this,Accueil.class);
+        accueil.putExtra("login",login);
+        accueil.putExtra("niveauAdmin",niveau_admin);
+
+        if (result.equals("OK")){
+            startActivity(accueil);
+        }else{
+
+            AlertDialog diagAdmin = new AlertDialog.Builder(this)
+                    .setTitle("Erreur")
+                    .setMessage("Vous n'avez pas le droit d'accéder à cette application")
+                    .setCancelable(false)
+                    .setPositiveButton("OK",null)
+                    .create();
+            diagAdmin.show();
+
+        }
     }
 
 }

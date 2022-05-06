@@ -19,10 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.w3c.dom.Text;
 
-public class ScanActivity extends MainActivity {
+public class ScanActivity extends AppCompatActivity {
 
     PendingIntent pendingIntent;
     NfcAdapter nfcAdapter;
@@ -31,12 +32,16 @@ public class ScanActivity extends MainActivity {
     String type;
     String gestion;
     String resultSrvClients;
+    String login_admin;
+    String resultSrv;
 
     String id_carte;
     String[] tabClientsId;
 
     String BaseUrl="https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
     String urlSrv;
+
+    Intent affichageProduits;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,7 @@ public class ScanActivity extends MainActivity {
         type = extras.get("type_produits").toString();
         gestion = extras.get("gestion").toString();
         resultSrvClients = extras.get("resultSrv").toString();
+        login_admin = extras.get("login_admin").toString();
 
         if (nfcAdapter == null) {
             Toast.makeText(this, "No NFC", Toast.LENGTH_SHORT).show();
@@ -64,6 +70,7 @@ public class ScanActivity extends MainActivity {
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
         tabClientsId = resultSrvClients.split(";");
+        affichageProduits = new Intent(this,AffichageProduitsActivity.class);
     }
 
     @Override
@@ -131,25 +138,34 @@ public class ScanActivity extends MainActivity {
 
         id_carte= String.valueOf(toDec(id));
 
-        if(gestion.equals("Produits")){
+        switch (gestion){
 
-            affichageProduits.putExtra("type_produits",type);
-            affichageProduits.putExtra("id_carte",String.valueOf(toDec(id)));
-            startActivity(affichageProduits);
+            case"Produits":
+                affichageProduits.putExtra("type_produits",type);
+                affichageProduits.putExtra("id_carte",id_carte);
+                affichageProduits.putExtra("login_admin",login_admin);
+                startActivity(affichageProduits);
 
+                break;
 
-        }else if(gestion.equals("Cartes")){
+            case"Cartes":
+                affichageAlertCarte();
 
-            /*GestionCarte.putExtra("id_carte",String.valueOf(toDec(id)));
-            startActivity(GestionCarte);*/
+                break;
 
-            affichageAlertCarte();
-        }else if(gestion.equals("Clients")){
+            case"Clients":
+                affichageAlertClient();
 
-            affichageAlertClient();
+                break;
+
+            case"Admins":
+                affichageAlertAdmin();
+
+            default: break;
+
         }
 
-        Log.e("Numéro de Carte",String.valueOf(toDec(id)));
+        Log.e("Numéro de Carte",id_carte);
         return String.valueOf(toDec(id));
     }
 
@@ -193,7 +209,6 @@ public class ScanActivity extends MainActivity {
 
         int j=0;
         while( j < tabClientsId.length){
-            Log.e("Testttttttt",String.valueOf(tabClientsId[j]));
             spinnerAdapter.add(String.valueOf(tabClientsId[j]));
             j++;
         }
@@ -218,9 +233,7 @@ public class ScanActivity extends MainActivity {
                     ajoutCarte+=",";
                     ajoutCarte+=mSpinnerClients.getSelectedItem().toString();
 
-                    Log.e("Testtt",ajoutCarte);
-
-                    urlSrv=BaseUrlSrv+"/ajoutCarte.php?donnees="+ajoutCarte;
+                    urlSrv=BaseUrl+"/ajoutCarte.php?donnees="+ajoutCarte;
                     Log.e("Testtt URL",urlSrv);
                     AjoutCarte conn = new AjoutCarte();
                     conn.execute(urlSrv);
@@ -285,9 +298,7 @@ public class ScanActivity extends MainActivity {
                     ajoutClient+=",";
                     ajoutClient+=mEditTextMontantCarte.getText().toString();
 
-                    Log.e("Testtt",ajoutClient);
-
-                    urlSrv=BaseUrlSrv+"/ajoutClient.php?donnees="+ajoutClient;
+                    urlSrv=BaseUrl+"/ajoutClient.php?donnees="+ajoutClient;
                     Log.e("Testtt URL",urlSrv);
                     AjoutCarte conn = new AjoutCarte();
                     conn.execute(urlSrv);
@@ -296,6 +307,113 @@ public class ScanActivity extends MainActivity {
                 .setCancelable(true)
                 .create();
         diagCarte.show();
+
+    }
+
+    public void affichageAlertAdmin(){
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(20,20,20,20);
+
+        TextView mTextViewNomAdmin = new TextView(this);
+        mTextViewNomAdmin.setText("Login");
+
+        EditText mEditTextNomAdmin=new EditText(this);
+        mEditTextNomAdmin.setHint("Login de l'Admin");
+
+        TextView mTextViewMdpAdmin = new TextView(this);
+        mTextViewMdpAdmin.setText("Mot de Passe");
+
+        EditText mEditTextMdpAdmin = new EditText(this);
+        mEditTextMdpAdmin.setHint("Mot de Passe");
+        mEditTextMdpAdmin.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        TextView mTextViewNumCarte = new TextView(this);
+        mTextViewNumCarte.setText("Numéro de la Carte");
+
+        TextView mTextViewIdCarte = new TextView(this);
+        mTextViewIdCarte.setText(id_carte);
+
+        TextView mTextViewNiveauAdmin = new TextView(this);
+        mTextViewNiveauAdmin.setText("Niveau");
+
+        Spinner mSpinnerNiveauAdmin = new Spinner(this);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, R.layout.ajout_carte);
+        mSpinnerNiveauAdmin.setAdapter(spinnerAdapter);
+
+        spinnerAdapter.add("1");
+        spinnerAdapter.add("2");
+        spinnerAdapter.add("3");
+        spinnerAdapter.add("4");
+        spinnerAdapter.add("5");
+
+
+        layout.addView(mTextViewNomAdmin);
+        layout.addView(mEditTextNomAdmin);
+        layout.addView(mTextViewMdpAdmin);
+        layout.addView(mEditTextMdpAdmin);
+        layout.addView(mTextViewNumCarte);
+        layout.addView(mTextViewIdCarte);
+        layout.addView(mTextViewNiveauAdmin);
+        layout.addView(mSpinnerNiveauAdmin);
+
+        AlertDialog diagCarte = new AlertDialog.Builder(this)
+                .setTitle("Ajouter un Admin")
+                .setView(layout)
+                .setPositiveButton("Ajouter", (dialogInterface, i) -> {
+
+                    MCrypt mcrypt = new MCrypt();
+                    /* Encrypt */
+                    String MdpEncrypted = null;
+                    try {
+                        MdpEncrypted = MCrypt.bytesToHex( mcrypt.encrypt(mEditTextMdpAdmin.getText().toString()) );
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                    String ajoutAdmin="";
+                    ajoutAdmin+=mEditTextNomAdmin.getText().toString();
+                    ajoutAdmin+="&Mdp=";
+                    ajoutAdmin+=MdpEncrypted;
+                    ajoutAdmin+="&carte=";
+                    ajoutAdmin+=mTextViewIdCarte.getText().toString();
+                    ajoutAdmin+="&niveau=";
+                    ajoutAdmin+=mSpinnerNiveauAdmin.getSelectedItem().toString();
+
+                    urlSrv=BaseUrl+"/ajoutAdmin.php?login="+ajoutAdmin;
+                    Log.e("Testtt URL",urlSrv);
+                    AjoutAdminToServer conn = new AjoutAdminToServer(this);
+                    conn.execute(urlSrv);
+                })
+                .setCancelable(true)
+                .create();
+        diagCarte.show();
+
+    }
+
+    public void ErreurAdmin(){
+
+            if(resultSrv.equals("ErreurAdmin") || resultSrv.equals("ErreurAdminClient")){
+                AlertDialog diagError = new AlertDialog.Builder(this)
+                        .setTitle("Erreur")
+                        .setMessage("Une erreur est survenue. Allez voir l'administrateur")
+                        .setPositiveButton("OK",(dialogInterface, i) -> finish())
+                        .setCancelable(true)
+                        .create();
+                diagError.show();
+
+            }else if(resultSrv.equals("NonUnique")){
+                AlertDialog diagError = new AlertDialog.Builder(this)
+                        .setTitle("Erreur")
+                        .setMessage("Le login entré ou la carte existe déjà dans le systéme. Veuillez réessayer")
+                        .setPositiveButton("OK",(dialogInterface, i) -> finish())
+                        .setCancelable(true)
+                        .create();
+                diagError.show();
+            }
+        finish();
 
     }
 }

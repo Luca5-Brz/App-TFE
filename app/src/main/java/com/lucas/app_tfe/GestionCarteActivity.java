@@ -27,7 +27,6 @@ public class GestionCarteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gestion_carte);
 
         Bundle extras = getIntent().getExtras();
-        //id_carte = extras.get("id_carte").toString();
         gestion = extras.get("gestion").toString();
 
         initializeComponents();
@@ -50,21 +49,11 @@ public class GestionCarteActivity extends AppCompatActivity {
     public void setOnClick(){
         mButtonCarte.setOnClickListener(view ->{
 
-            /*WebView testWV = new WebView(this);
-            testWV.loadUrl("https://launcher.carrieresduhainaut.com/launcherdev/Lucas/TestWebViewCarte.php");
-            WebSettings webSettings = testWV.getSettings();
-            webSettings.setJavaScriptEnabled(true);
-
-            AlertDialog diagCarte = new AlertDialog.Builder(this)
-                    .setTitle("Ajouter une carte")
-                    .setView(testWV)
-                    .create();
-            diagCarte.show();*/
-
             Intent scan = new Intent(this,ScanActivity.class);
             scan.putExtra("gestion",gestion);
             scan.putExtra("type_produits","");
             scan.putExtra("resultSrv",resultSrv);
+            scan.putExtra("login_admin","");
             startActivity(scan);
 
 
@@ -76,6 +65,7 @@ public class GestionCarteActivity extends AppCompatActivity {
             scan.putExtra("gestion","Clients");
             scan.putExtra("type_produits","");
             scan.putExtra("resultSrv",resultSrv);
+            scan.putExtra("login_admin","");
             startActivity(scan);
 
         });

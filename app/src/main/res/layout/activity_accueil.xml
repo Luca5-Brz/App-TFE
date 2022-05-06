@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Accueil"
+    android:padding="5dp"
+    >
+
+    <TextView
+        android:id="@+id/main_textview_bonjour"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bonjour, que fais-tu maintenant ?"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        />
+    <Button
+        android:id="@+id/main_button_boisson"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Les Boissons"
+        android:layout_marginTop="10dp"
+        />
+    <Button
+        android:id="@+id/main_button_repas"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Les Repas"
+        android:layout_marginTop="10dp"
+        />
+    <Button
+        android:id="@+id/main_button_scanning"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Gestion Clients"
+        android:layout_marginTop="10dp"
+        android:visibility="invisible"
+        />
+    <Button
+        android:id="@+id/main_button_admin"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Ajouter un admin"
+        android:layout_marginTop="10dp"
+        android:visibility="invisible"
+        />
+
+</LinearLayout>
