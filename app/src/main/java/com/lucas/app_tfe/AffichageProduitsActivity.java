@@ -3,7 +3,6 @@ package com.lucas.app_tfe;
 import static java.lang.Integer.parseInt;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class AffichageProduitsActivity extends AppCompatActivity {
@@ -40,7 +38,8 @@ public class AffichageProduitsActivity extends AppCompatActivity {
 
     String montantCarte;
 
-    String BaseUrl = "https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    //String BaseUrl = "https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    String BaseUrl = "http://192.168.1.253/PageAndroid";
     String urlSrv;
 
     TextView txtTotalTitle;
@@ -169,8 +168,8 @@ public class AffichageProduitsActivity extends AppCompatActivity {
                 tbRow.addView(txtProd);
                 tbRow.addView(txtPrixProd);
                 tbRow.addView(txtQteProd);
-                tbRow.addView(btnPlus);
                 tbRow.addView(btnMoins);
+                tbRow.addView(btnPlus);
 
                 mTableLayout.addView(tbRow,layoutParams);
                 i++;
@@ -208,9 +207,17 @@ public class AffichageProduitsActivity extends AppCompatActivity {
                 JSONArray tabJSON = new JSONArray(Arrays.asList(tabPrixProd));
                 Log.e("tabJSON",""+tabJSON);
 
-                urlSrv=BaseUrl+"/validerCommande.php?commande="+String.valueOf(tabJSON)+"&idCarte="+id_carte+"&type="+type_prod+"&loginServeur="+login_admin; //type=Repas
-                ValiderCommande conn = new ValiderCommande(this);
-                conn.execute(urlSrv);
+                if (type_prod.equals("Snacks"))
+                {
+                    urlSrv=BaseUrl+"/validerCommandeSnacks.php?commande="+tabJSON+"&idCarte="+id_carte+"&type="+type_prod+"&loginServeur="+login_admin; //type=Repas
+                    ValiderCommande conn = new ValiderCommande(this);
+                    conn.execute(urlSrv);
+                }else{
+                    urlSrv=BaseUrl+"/validerCommande.php?commande="+tabJSON+"&idCarte="+id_carte+"&type="+type_prod+"&loginServeur="+login_admin; //type=Repas
+                    ValiderCommande conn = new ValiderCommande(this);
+                    conn.execute(urlSrv);
+                }
+
             Log.e("URL Commande",urlSrv);
 
             });

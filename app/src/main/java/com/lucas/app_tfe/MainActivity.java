@@ -9,19 +9,10 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
     String id_carte;
 
-    String BaseUrl="https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    //String BaseUrl="https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    String BaseUrl = "http://192.168.1.253/PageAndroid";
     String urlSrv;
     String resultSrv;
 

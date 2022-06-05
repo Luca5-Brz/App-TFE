@@ -21,8 +21,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.w3c.dom.Text;
-
 public class ScanActivity extends AppCompatActivity {
 
     PendingIntent pendingIntent;
@@ -38,7 +36,8 @@ public class ScanActivity extends AppCompatActivity {
     String id_carte;
     String[] tabClientsId;
 
-    String BaseUrl="https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    //String BaseUrl="https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    String BaseUrl = "http://192.168.1.253/PageAndroid";
     String urlSrv;
 
     Intent affichageProduits;
@@ -145,7 +144,6 @@ public class ScanActivity extends AppCompatActivity {
                 affichageProduits.putExtra("id_carte",id_carte);
                 affichageProduits.putExtra("login_admin",login_admin);
                 startActivity(affichageProduits);
-
                 break;
 
             case"Cartes":

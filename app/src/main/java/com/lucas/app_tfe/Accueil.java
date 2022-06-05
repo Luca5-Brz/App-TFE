@@ -2,12 +2,9 @@ package com.lucas.app_tfe;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -15,11 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Accueil extends AppCompatActivity {
 
-    public String BaseUrlSrv = "https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    //public String BaseUrlSrv = "https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    String BaseUrl = "http://192.168.1.253/PageAndroid";
 
     TextView mTextViewBnj;
     Button mBtnBoissons;
     Button mBtnRepas;
+    Button mBtnSnacks;
+    Button mBtnFuts;
     Button mBtnScanning;
     Button mBtnAdmin;
 
@@ -61,6 +61,8 @@ public class Accueil extends AppCompatActivity {
         mTextViewBnj = findViewById(R.id.main_textview_bonjour);
         mBtnBoissons = findViewById(R.id.main_button_boisson);
         mBtnRepas = findViewById(R.id.main_button_repas);
+        mBtnSnacks = findViewById(R.id.main_button_snacks);
+        mBtnFuts = findViewById(R.id.main_button_futs);
         mBtnScanning = findViewById(R.id.main_button_scanning);
         mBtnAdmin = findViewById(R.id.main_button_admin);
     }
@@ -83,6 +85,26 @@ public class Accueil extends AppCompatActivity {
             startActivity(scan);
         });
 
+        mBtnSnacks.setOnClickListener(view -> {
+            scan.putExtra("type_produits","Snacks");
+            scan.putExtra("gestion","Produits");
+            scan.putExtra("resultSrv","");
+            scan.putExtra("login_admin",login_admin);
+            startActivity(scan);
+        });
+
+        mBtnFuts.setOnClickListener(view -> {
+            /*scan.putExtra("type_produits","Fut");
+            scan.putExtra("gestion","Produits");
+            scan.putExtra("resultSrv","");
+            scan.putExtra("login_admin",login_admin);
+            startActivity(scan);*/
+            affichageProduits.putExtra("type_produits","Fut");
+            affichageProduits.putExtra("id_carte","");
+            affichageProduits.putExtra("login_admin",login_admin);
+            startActivity(affichageProduits);
+        });
+
         if(Integer.parseInt(niveauAdmin)>=4){
             mBtnScanning.setVisibility(View.VISIBLE);
             mBtnScanning.setOnClickListener(view -> {
@@ -100,7 +122,6 @@ public class Accueil extends AppCompatActivity {
             mBtnAdmin.setVisibility(View.VISIBLE);
 
             mBtnAdmin.setOnClickListener(view -> {
-
 
                 Intent scan = new Intent(this,ScanActivity.class);
                 scan.putExtra("gestion","Admins");

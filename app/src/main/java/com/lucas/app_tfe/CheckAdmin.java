@@ -22,9 +22,10 @@ public class CheckAdmin extends AsyncTask<String, String, String> {
     }
 
     protected String doInBackground(String... params) {
+        Log.e("url",params[0]);
 
         BufferedReader buffReader;
-        HttpURLConnection connexion;
+        HttpURLConnection connexion=null;
 
         try {
             URL url = new URL(params[0]);
@@ -49,6 +50,10 @@ public class CheckAdmin extends AsyncTask<String, String, String> {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (connexion !=null){
+                connexion.disconnect();
+            }
         }
         return null;
     }

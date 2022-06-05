@@ -9,7 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class GestionCarteActivity extends AppCompatActivity {
 
-    public String BaseUrlSrv = "https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    //public String BaseUrlSrv = "https://launcher.carrieresduhainaut.com/launcherdev/lucas/pageAndroid";
+    String BaseUrlSrv = "http://192.168.1.253/PageAndroid";
     String urlSrv;
     String resultSrv;
 
